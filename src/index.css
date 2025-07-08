@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Elite Supps Design System - Gym supplement e-commerce theme
+All colors MUST be HSL. Color palette: #ffd000, #ffa200, #ffea00
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+
+    /* Elite Supps Brand Colors */
+    --primary: 51 100% 50%;        /* #ffd000 - Primary Yellow */
+    --primary-foreground: 0 0% 7%; /* Dark text on yellow */
+
+    --secondary: 39 100% 50%;       /* #ffa200 - Secondary Orange */
+    --secondary-foreground: 0 0% 100%; /* White text on orange */
+
+    --accent: 54 100% 50%;          /* #ffea00 - Highlight Yellow */
+    --accent-foreground: 0 0% 7%;   /* Dark text on highlight */
+
+    /* Supporting Colors */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --ring: 51 100% 50%;           /* Primary yellow for focus rings */
+
+    /* Elite Supps Specific Variables */
+    --elite-primary: 51 100% 50%;   /* #ffd000 */
+    --elite-secondary: 39 100% 50%; /* #ffa200 */
+    --elite-highlight: 54 100% 50%; /* #ffea00 */
+    --elite-dark: 0 0% 7%;          /* Footer/text */
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--elite-primary)), hsl(var(--elite-secondary)));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--elite-highlight)), hsl(var(--elite-primary)));
+    
+    /* Shadows and Effects */
+    --shadow-glow: 0 0 20px hsl(var(--elite-primary) / 0.4);
+    --shadow-hover: 0 10px 30px hsl(var(--elite-primary) / 0.3);
+    --shadow-card: 0 4px 12px hsl(0 0% 0% / 0.1);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
