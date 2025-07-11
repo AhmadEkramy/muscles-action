@@ -184,15 +184,14 @@ const ProductDetail = () => {
                   <Star 
                     key={i} 
                     className={`h-5 w-5 ${
-                      i < Math.floor(product.rating) 
+                      i < Math.floor(product.rate || 0) 
                         ? 'text-elite-primary fill-current' 
                         : 'text-muted-foreground'
                     }`} 
                   />
                 ))}
               </div>
-              <span className="text-lg font-semibold">{product.rating}</span>
-              <span className="text-muted-foreground">({product.reviews} reviews)</span>
+              <span className="text-lg font-semibold">{typeof product.rate === 'number' ? product.rate : 0}</span>
             </div>
 
             {/* Price */}

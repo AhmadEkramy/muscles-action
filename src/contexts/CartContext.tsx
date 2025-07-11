@@ -22,6 +22,7 @@ export interface Product {
   isNew?: boolean;
   isBestSeller?: boolean;
   flavors?: string[];
+  rate?: number; // Add this line
 }
 
 export interface CartItem extends Product {

@@ -60,7 +60,7 @@ const Index = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 justify-center mx-auto" style={{ maxWidth: '1100px' }}>
             {offers.map(offer => (
-              <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden hover:scale-105 hover:shadow-yellow-400/60 duration-300 animate-pulse">
+              <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden hover:scale-105 hover:shadow-yellow-400/60 duration-300 animate-pulse flex flex-col items-center text-center">
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-all animate-glow-pulse" />
                 <h3 className="text-xl font-bold mb-2 text-yellow-700">{language === 'ar' ? offer.titleAr || offer.title : offer.title}</h3>
                 <p className="text-gray-700 mb-2">{language === 'ar' ? offer.descriptionAr || offer.description : offer.description}</p>
@@ -68,7 +68,7 @@ const Index = () => {
                   {offer.products.map(pid => {
                     const prod = products.find(p => p.id === pid);
                     return prod ? (
-                      <img key={pid} src={prod.image} alt={language === 'ar' ? prod.nameAr || prod.name : prod.name} className="w-12 h-12 object-cover rounded shadow border-2 border-yellow-300" />
+                      <img key={pid} src={prod.image} alt={language === 'ar' ? prod.nameAr || prod.name : prod.name} className="w-20 h-20 object-cover rounded shadow border-2 border-yellow-300" />
                     ) : null;
                   })}
                 </div>

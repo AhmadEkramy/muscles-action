@@ -43,7 +43,7 @@ const OffersPage = () => {
               <div className="col-span-3 text-center text-gray-400 py-12 text-lg">No offers available at the moment.</div>
             ) : (
               offers.map(offer => (
-                <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden hover:scale-105 hover:shadow-yellow-400/60 duration-300 animate-pulse">
+                <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden hover:scale-105 hover:shadow-yellow-400/60 duration-300 animate-pulse flex flex-col items-center text-center">
                   <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-all animate-glow-pulse" />
                   <h3 className="text-xl font-bold mb-2 text-yellow-700">{offer.title}</h3>
                   <p className="text-gray-700 mb-2">{offer.description}</p>
@@ -51,7 +51,7 @@ const OffersPage = () => {
                     {offer.products.map(pid => {
                       const prod = products.find(p => p.id === pid);
                       return prod ? (
-                        <img key={pid} src={prod.image} alt={prod.name} className="w-12 h-12 object-cover rounded shadow border-2 border-yellow-300" />
+                        <img key={pid} src={prod.image} alt={prod.name} className="w-20 h-20 object-cover rounded shadow border-2 border-yellow-300" />
                       ) : null;
                     })}
                   </div>

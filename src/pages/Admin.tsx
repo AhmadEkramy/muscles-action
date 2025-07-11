@@ -32,8 +32,9 @@ const Admin = () => {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', inStock: false, isBestSeller: false, isNew: false });
-  const [addForm, setAddForm] = useState({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', isBestSeller: false, isNew: false });
+  // Update initial state for addForm and editForm to include 'rate'
+  const [editForm, setEditForm] = useState({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', inStock: false, isBestSeller: false, isNew: false, rate: 5 });
+  const [addForm, setAddForm] = useState({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', isBestSeller: false, isNew: false, rate: 5 });
   const [savingAdd, setSavingAdd] = useState(false);
   const [savingEdit, setSavingEdit] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -166,13 +167,14 @@ const Admin = () => {
       price: Number(addForm.price),
       isBestSeller: !!addForm.isBestSeller,
       isNew: !!addForm.isNew,
+      rate: Number(addForm.rate),
     };
     if (addForm.originalPrice) data.originalPrice = addForm.originalPrice;
     if (addForm.discount) data.discount = addForm.discount;
     await addDoc(collection(db, 'products'), data);
     setSavingAdd(false);
     setAddProductOpen(false);
-    setAddForm({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', isBestSeller: false, isNew: false });
+    setAddForm({ name: '', nameAr: '', description: '', descriptionAr: '', images: [''], flavors: [''], price: '', originalPrice: '', discount: '', category: '', isBestSeller: false, isNew: false, rate: 5 });
     setLoadingProducts(true);
     getDocs(collection(db, 'products')).then(snapshot => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -197,6 +199,7 @@ const Admin = () => {
       inStock: product.inStock || false,
       isBestSeller: !!product.isBestSeller,
       isNew: !!product.isNew,
+      rate: product.rate || 5,
     });
   };
   const handleEditChange = (e) => setEditForm({ ...editForm, [e.target.name]: e.target.value });
@@ -217,6 +220,7 @@ const Admin = () => {
       price: Number(editForm.price),
       isBestSeller: !!editForm.isBestSeller,
       isNew: !!editForm.isNew,
+      rate: Number(editForm.rate),
     };
     if (editForm.originalPrice) data.originalPrice = editForm.originalPrice;
     if (editForm.discount) data.discount = editForm.discount;
@@ -558,6 +562,19 @@ const Admin = () => {
                     <Input name="price" type="number" placeholder="Price (After Discount)" value={addForm.price} onChange={handleAddChange} required />
                     <Input name="originalPrice" type="number" placeholder="Original Price (Before Discount)" value={addForm.originalPrice} onChange={handleAddChange} />
                     <Input name="discount" type="number" placeholder="Discount (%)" value={addForm.discount} onChange={handleAddChange} />
+                    <div>
+                      <label className="block font-semibold mb-1">Rating (1-5 stars)</label>
+                      <input
+                        name="rate"
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={addForm.rate}
+                        onChange={handleAddChange}
+                        className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                        required
+                      />
+                    </div>
                     <label className="block font-semibold mb-1">Category</label>
                     <select
                       name="category"
@@ -641,6 +658,19 @@ const Admin = () => {
                     <Input name="price" type="number" placeholder="Price (After Discount)" value={editForm.price} onChange={handleEditChange} required />
                     <Input name="originalPrice" type="number" placeholder="Original Price (Before Discount)" value={editForm.originalPrice} onChange={handleEditChange} />
                     <Input name="discount" type="number" placeholder="Discount (%)" value={editForm.discount} onChange={handleEditChange} />
+                    <div>
+                      <label className="block font-semibold mb-1">Rating (1-5 stars)</label>
+                      <input
+                        name="rate"
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={editForm.rate}
+                        onChange={handleEditChange}
+                        className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                        required
+                      />
+                    </div>
                     <label className="block font-semibold mb-1">Category</label>
                     <select
                       name="category"
@@ -709,7 +739,7 @@ const Admin = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {offers.map(offer => (
-                  <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden">
+                  <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden flex flex-col items-center text-center">
                     <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-all animate-pulse" />
                     <h2 className="text-xl font-bold mb-2 text-yellow-700">{offer.title}</h2>
                     <p className="text-gray-700 mb-2">{offer.description}</p>

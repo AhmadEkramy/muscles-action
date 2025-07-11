@@ -1,15 +1,15 @@
 import { Product } from '@/contexts/CartContext';
 
 export const categories = [
-  { id: 'protein', name: 'Protein', nameAr: 'بروتين', image: '/src/assets/protein.png' },
-  { id: 'creatine', name: 'Creatine', nameAr: 'كرياتين', image: '/src/assets/creatine.png' },
-  { id: 'mass-gainer', name: 'Mass Gainer', nameAr: 'زيادة الوزن', image: '/src/assets/mass-gainer.png' },
-  { id: 'carb', name: 'Carb', nameAr: 'كربوهيدرات', image: '/src/assets/carb.png' },
-  { id: 'fat-burner', name: 'Fat Burner', nameAr: 'حارق الدهون', image: '/src/assets/fat-burner.png' },
-  { id: 'test-booster', name: 'Test Booster', nameAr: 'منشط التستوستيرون', image: '/src/assets/test-booster.png' },
-  { id: 'amino-acids', name: 'Amino Acids', nameAr: 'أحماض أمينية', image: '/src/assets/amino-acids.png' },
-  { id: 'preworkout', name: 'Preworkout', nameAr: 'ما قبل التمرين', image: '/src/assets/preworkout.png' },
-  { id: 'vitamins', name: 'Vitamins', nameAr: 'فيتامينات', image: '/src/assets/vitamins.png' },
+  { id: 'protein', name: 'Protein', nameAr: 'بروتين', image: 'https://super-eg.com/wp-content/uploads/2023/05/fa-gold-whey-protein-isolate-2-kg.jpg.webp' },
+  { id: 'creatine', name: 'Creatine', nameAr: 'كرياتين', image: 'https://ifit-eg.com/wp-content/uploads/2023/07/Optimum-Nutrition-Micronized-Creatine-Powder-300-g.png' },
+  { id: 'mass-gainer', name: 'Mass Gainer', nameAr: 'زيادة الوزن', image: 'https://super-eg.com/wp-content/uploads/2025/04/red-rex-Big-Mass-Bag-12lbs-Vanilla.webp' },
+  { id: 'carb', name: 'Carb', nameAr: 'كربوهيدرات', image: 'https://super-eg.com/wp-content/uploads/2023/12/Screenshot-2023-12-23-141914.png.webp' },
+  { id: 'fat-burner', name: 'Fat Burner', nameAr: 'حارق الدهون', image: 'https://super-eg.com/wp-content/uploads/2024/06/anabolic-diuretic-90-tablets.jpg.webp' },
+  { id: 'test-booster', name: 'Test Booster', nameAr: 'منشط التستوستيرون', image: 'https://super-eg.com/wp-content/uploads/2025/05/QUAMTRAX-NUTRITION-Tribulus-ZMA.webp' },
+  { id: 'amino-acids', name: 'Amino Acids', nameAr: 'أحماض أمينية', image: 'https://i0.wp.com/vertex-nutrition.com/wp-content/uploads/2025/05/AMino-1.png?fit=1025%2C1025&ssl=1' },
+  { id: 'preworkout', name: 'Preworkout', nameAr: 'ما قبل التمرين', image: 'https://super-eg.com/wp-content/uploads/2020/02/C4_Original_FP60_Image.jpg' },
+  { id: 'vitamins', name: 'Vitamins', nameAr: 'فيتامينات', image: 'https://www.organicnationeg.com/cdn/shop/files/ActivatedCoral.jpg?v=1749502794' },
 ];
 
 export const sampleProducts: Product[] = [

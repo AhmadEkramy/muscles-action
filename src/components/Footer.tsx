@@ -5,14 +5,11 @@ import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Dialog } from '@/components/ui/dialog';
-import AuthForm from '@/components/AuthForm';
 import { Button } from '@/components/ui/button';
 
 const Footer = () => {
   const { language, t } = useLanguage();
   const [user, setUser] = useState(null);
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -170,15 +167,10 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          {!user && (
-            <Button variant="default" className="bg-yellow-400 text-black w-full mt-4" onClick={() => setShowAuthDialog(true)}>
-              Login / Register
-            </Button>
-          )}
-          <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-            <AuthForm />
-          </Dialog>
+        <div className="flex justify-center mt-4">
+          <Button variant="default" className="bg-yellow-400 text-black" onClick={() => navigate('/admin')}>
+            Admin
+          </Button>
         </div>
       </div>
     </footer>
