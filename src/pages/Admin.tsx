@@ -1,15 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '@/lib/utils';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '@/lib/utils';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const COLOR_PRIMARY = '#ffd000';
-const COLOR_SECONDARY = '#ffa200';
-const COLOR_HIGHLIGHT = '#ffea00';
+// Define types for our data structures
+interface Order {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  items: Array<{
+    name: string;
+    flavor?: string;
+    quantity: number;
+  }>;
+  total: number;
+  status: string;
+  createdAt: { seconds: number } | string | Date;
+}
+
+// تم إلغاء الألوان القديمة لصالح الهوية الرمادية الجديدة
 
 const panels = [
   { key: 'products', label: 'Products' },
@@ -29,6 +43,13 @@ const Admin = () => {
 
   // Products state
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filters, setFilters] = useState({
+    category: '',
+    minPrice: '',
+    maxPrice: '',
+    stockStatus: 'all'
+  });
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
@@ -60,7 +81,7 @@ const Admin = () => {
   const [editCoupon, setEditCoupon] = useState(null);
 
   // Orders state
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
 
   // Stats state
@@ -83,10 +104,29 @@ const Admin = () => {
     if (activePanel !== 'products') return;
     setLoadingProducts(true);
     getDocs(collection(db, 'products')).then(snapshot => {
-      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(allProducts);
+      setFilteredProducts(allProducts);
       setLoadingProducts(false);
     });
   }, [activePanel]);
+
+  // Filter products when filters change
+  useEffect(() => {
+    if (!products.length) return;
+    
+    const filtered = products.filter(product => {
+      const categoryMatch = !filters.category || product.category === filters.category;
+      const minPriceMatch = !filters.minPrice || product.price >= Number(filters.minPrice);
+      const maxPriceMatch = !filters.maxPrice || product.price <= Number(filters.maxPrice);
+      const stockMatch = filters.stockStatus === 'all' || 
+        (filters.stockStatus === 'inStock' ? product.inStock : !product.inStock);
+      
+      return categoryMatch && minPriceMatch && maxPriceMatch && stockMatch;
+    });
+    
+    setFilteredProducts(filtered);
+  }, [filters, products]);
 
   useEffect(() => {
     if (activePanel !== 'offers') return;
@@ -110,7 +150,7 @@ const Admin = () => {
     if (activePanel !== 'orders') return;
     setLoadingOrders(true);
     getDocs(collection(db, 'orders')).then(snapshot => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const orders: Order[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
       setOrders(orders);
       setLoadingOrders(false);
     });
@@ -120,7 +160,7 @@ const Admin = () => {
     if (activePanel !== 'stats') return;
     setLoadingStats(true);
     getDocs(collection(db, 'orders')).then(snapshot => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const orders: Order[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
       const totalOrders = orders.length;
       const totalSales = orders.reduce((sum, o) => sum + (o.total || 0), 0);
       const confirmedOrders = orders.filter(o => o.status === 'Confirmed').length;
@@ -380,7 +420,7 @@ const Admin = () => {
     setLoadingOrders(true);
     await updateDoc(doc(db, 'orders', id), { status: 'Confirmed' });
     getDocs(collection(db, 'orders')).then(snapshot => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const orders: Order[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
       setOrders(orders);
       setLoadingOrders(false);
     });
@@ -390,7 +430,7 @@ const Admin = () => {
     setLoadingOrders(true);
     await updateDoc(doc(db, 'orders', id), { status: 'Delivered' });
     getDocs(collection(db, 'orders')).then(snapshot => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Order) }));
       setOrders(orders);
       setLoadingOrders(false);
     });
@@ -402,7 +442,7 @@ const Admin = () => {
     setDeletingId(null);
     setLoadingOrders(true);
     getDocs(collection(db, 'orders')).then(snapshot => {
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Order) }));
       setOrders(orders);
       setLoadingOrders(false);
     });
@@ -410,15 +450,15 @@ const Admin = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <form onSubmit={handleLogin} className="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 flex flex-col gap-4 min-w-[320px]">
-          <h2 className="text-2xl font-bold mb-2 text-yellow-400">Admin Login</h2>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <form onSubmit={handleLogin} className="bg-card border border-border rounded-2xl shadow-lg p-8 flex flex-col gap-4 min-w-[320px]">
+          <h2 className="text-2xl font-bold mb-2 text-primary">Admin Login</h2>
           <input
             type="email"
             placeholder="Email"
             value={loginForm.email}
             onChange={e => setLoginForm(f => ({ ...f, email: e.target.value }))}
-            className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+            className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
             required
           />
           <input
@@ -426,11 +466,11 @@ const Admin = () => {
             placeholder="Password"
             value={loginForm.password}
             onChange={e => setLoginForm(f => ({ ...f, password: e.target.value }))}
-            className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+            className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
             required
           />
-          {loginError && <div className="text-red-500 text-sm">{loginError}</div>}
-          <button type="submit" className="bg-yellow-400 text-black font-bold py-2 rounded hover:bg-yellow-500 transition-all" disabled={loading}>
+          {loginError && <div className="text-destructive text-sm">{loginError}</div>}
+          <button type="submit" className="bg-primary text-primary-foreground font-bold py-2 rounded hover:bg-primary/80 transition-all" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
@@ -439,19 +479,19 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-black text-white flex flex-col justify-between py-4 md:py-8 px-2 md:px-4 shadow-lg">
+      <aside className="w-full md:w-64 bg-foreground text-background flex flex-col justify-between py-4 md:py-8 px-2 md:px-4 shadow-lg">
         <div>
-          <div className="text-2xl font-bold mb-8 flex items-center gap-2" style={{ color: COLOR_PRIMARY }}>
+          <div className="text-2xl font-bold mb-8 flex items-center gap-2 text-primary">
             🧑‍💻 Admin Dashboard
           </div>
           <nav className="flex flex-col gap-2">
             {panels.map(panel => (
               <button
                 key={panel.key}
-                className={`text-left px-4 py-2 rounded transition-all font-semibold ${activePanel === panel.key ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'hover:bg-yellow-500/20 hover:text-yellow-400'}`}
-                style={activePanel === panel.key ? { boxShadow: `0 0 8px 2px ${COLOR_PRIMARY}` } : {}}
+                className={`text-left px-4 py-2 rounded transition-all font-semibold ${activePanel === panel.key ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'hover:bg-primary/10 hover:text-primary'}`}
+                style={activePanel === panel.key ? { boxShadow: '0 0 8px 2px var(--primary)' } : {}}
                 onClick={() => setActivePanel(panel.key)}
               >
                 {panel.label}
@@ -461,13 +501,13 @@ const Admin = () => {
         </div>
         <div className="flex flex-col gap-2">
           <button
-            className="w-full py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all shadow-lg"
+            className="w-full py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all shadow-lg"
             onClick={handleLogout}
           >
             Logout
           </button>
           <button
-            className="w-full py-2 rounded bg-white text-black border border-yellow-400 font-bold hover:bg-yellow-100 transition-all"
+            className="w-full py-2 rounded bg-card text-card-foreground border border-primary font-bold hover:bg-muted transition-all"
             onClick={() => navigate('/')}
           >
             Return to Main Site
@@ -475,47 +515,104 @@ const Admin = () => {
         </div>
       </aside>
       {/* Main Content */}
-      <main className="flex-1 p-2 sm:p-4 md:p-8 bg-white min-h-screen">
+      <main className="flex-1 p-2 sm:p-4 md:p-8 bg-background min-h-screen">
         {activePanel === 'products' && (
           <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: COLOR_PRIMARY }}>Products Management</h1>
-            <div className="flex justify-end mb-6">
-              <button className="px-6 py-2 rounded bg-yellow-400 text-black font-bold shadow hover:bg-yellow-500 transition-all" onClick={() => setAddProductOpen(true)}>+ Add Product</button>
+            <h1 className="text-3xl font-bold mb-6 text-primary">Products Management</h1>
+            <div className="flex flex-col gap-4 mb-6">
+              <div className="flex justify-between items-center">
+                <div className="flex flex-wrap gap-4 items-center">
+                  {/* Extract categories from products */}
+                  <select
+                    value={filters.category}
+                    className="border border-border rounded px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none bg-background"
+                    onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                  >
+                    <option value="">All Categories</option>
+                    {[...new Set(products.map(p => p.category).filter(Boolean))].map((cat, idx) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min Price"
+                      value={filters.minPrice}
+                      className="border border-border rounded px-3 py-2 w-24 focus:ring-2 focus:ring-primary focus:outline-none bg-background"
+                      onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                    />
+                    <span className="text-muted-foreground">-</span>
+                    <input
+                      type="number"
+                      placeholder="Max Price"
+                      value={filters.maxPrice}
+                      className="border border-border rounded px-3 py-2 w-24 focus:ring-2 focus:ring-primary focus:outline-none bg-background"
+                      onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                    />
+                  </div>
+                  <select
+                    value={filters.stockStatus}
+                    className="border border-border rounded px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none bg-background"
+                    onChange={(e) => setFilters(prev => ({ ...prev, stockStatus: e.target.value }))}
+                  >
+                    <option value="all">All Stock</option>
+                    <option value="inStock">In Stock</option>
+                    <option value="outOfStock">Out of Stock</option>
+                  </select>
+                  <button
+                    onClick={() => setFilters({
+                      category: '',
+                      minPrice: '',
+                      maxPrice: '',
+                      stockStatus: 'all'
+                    })}
+                    className="px-4 py-2 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition-all"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+                <button className="px-6 py-2 rounded bg-primary text-primary-foreground font-bold shadow hover:bg-primary/80 transition-all" onClick={() => setAddProductOpen(true)}>+ Add Product</button>
+              </div>
             </div>
             {loadingProducts ? (
-              <div className="text-center py-8 text-gray-400">Loading...</div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">No products found.</div>
+              <div className="text-center py-8 text-muted-foreground">Loading...</div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                {products.length === 0 ? "No products found." : "No products match the selected filters."}
+              </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <div key={product.id} className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center border border-yellow-100 hover:shadow-2xl transition-all group relative">
+                {filteredProducts.map((product) => (
+                  <div key={product.id} className="bg-card rounded-lg shadow-lg p-4 flex flex-col items-center border border-border hover:shadow-2xl transition-all group relative">
                     {product.discount && (
-                      <div className="absolute top-2 right-2 bg-yellow-400 text-white px-3 py-1 rounded-full font-bold text-xs shadow animate-pulse">
+                      <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full font-bold text-xs shadow animate-pulse">
                         -{product.discount}%
                       </div>
                     )}
                     <img src={product.image || (Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '/placeholder.svg')} alt={product.name} className="w-32 h-32 object-cover rounded mb-4 group-hover:scale-105 transition-transform" />
                     <h2 className="text-lg font-bold mb-1 text-center">{product.name}</h2>
-                    <h3 className="text-md font-semibold text-yellow-600 mb-1 text-center">{product.nameAr}</h3>
-                    <div className="text-xs text-gray-500 mb-1 text-center">{product.category}</div>
-                    <div className="text-sm text-gray-700 mb-2 text-center">{product.description}</div>
-                    <div className="text-sm text-yellow-700 mb-2 text-center">{product.descriptionAr}</div>
+                    <h3 className="text-md font-semibold text-primary mb-1 text-center">{product.nameAr}</h3>
+                    <div className="text-xs text-muted-foreground mb-1 text-center">{product.category}</div>
+                    <div className="text-sm text-muted-foreground mb-2 text-center">{product.description}</div>
+                    <div className="text-sm text-primary mb-2 text-center">{product.descriptionAr}</div>
                     <div className="flex gap-2 flex-wrap justify-center mb-2">
                       {Array.isArray(product.flavors) && product.flavors.map((fl, idx) => (
-                        <span key={idx} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">{fl}</span>
+                        <span key={idx} className="bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-semibold">{fl}</span>
                       ))}
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl font-bold" style={{ color: COLOR_PRIMARY }}>{product.price} EGP</span>
+                      <span className="text-lg font-bold text-primary">{product.price} EGP</span>
                       {product.originalPrice && (
-                        <span className="text-md text-gray-400 line-through">{product.originalPrice} EGP</span>
+                        <span className="text-md text-muted-foreground line-through">{product.originalPrice} EGP</span>
                       )}
                     </div>
-                    <div className="flex gap-2 mt-2">
-                      <button className="px-4 py-1 rounded bg-yellow-400 text-black font-bold shadow hover:bg-yellow-500 transition-all" onClick={() => handleEditClick(product)}>Edit</button>
-                      <button className="px-4 py-1 rounded bg-red-500 text-white font-bold shadow hover:bg-red-600 transition-all" onClick={() => handleDelete(product.id)} disabled={deletingId === product.id}>{deletingId === product.id ? 'Deleting...' : 'Delete'}</button>
+                    <div className="flex gap-2">
+                      <button className="px-4 py-1 rounded bg-primary text-primary-foreground font-bold shadow hover:bg-primary/80 transition-all" onClick={() => handleEditClick(product)}>Edit</button>
+                      <button className="px-4 py-1 rounded bg-destructive text-destructive-foreground font-bold shadow hover:bg-destructive/80 transition-all" onClick={() => handleDelete(product.id)} disabled={deletingId === product.id}>{deletingId === product.id ? 'Deleting...' : 'Delete'}</button>
                   </div>
+                    {product.originalPrice && (
+                      <span className="text-md text-muted-foreground line-through">{product.originalPrice} EGP</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -571,7 +668,7 @@ const Admin = () => {
                         max={5}
                         value={addForm.rate}
                         onChange={handleAddChange}
-                        className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                        className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
                         required
                       />
                     </div>
@@ -581,7 +678,7 @@ const Admin = () => {
                       value={addForm.category}
                       onChange={handleAddChange}
                       required
-                      className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                      className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
                     >
                       <option value="" disabled>Select category</option>
                       {[...new Set(products.map(p => p.category).filter(Boolean))].map(cat => (
@@ -609,7 +706,7 @@ const Admin = () => {
                       </label>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <button type="submit" disabled={savingAdd} className="w-full px-4 py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all">{savingAdd ? 'Saving...' : 'Save'}</button>
+                      <button type="submit" disabled={savingAdd} className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all">{savingAdd ? 'Saving...' : 'Save'}</button>
                       <button type="button" className="w-full px-4 py-2 rounded bg-gray-200 text-black font-bold hover:bg-gray-300 transition-all" onClick={() => setAddProductOpen(false)}>Cancel</button>
                     </div>
                   </form>
@@ -667,7 +764,7 @@ const Admin = () => {
                         max={5}
                         value={editForm.rate}
                         onChange={handleEditChange}
-                        className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                        className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
                         required
                       />
                     </div>
@@ -677,7 +774,7 @@ const Admin = () => {
                       value={editForm.category}
                       onChange={handleEditChange}
                       required
-                      className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+                      className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
                     >
                       <option value="" disabled>Select category</option>
                       {[...new Set(products.map(p => p.category).filter(Boolean))].map(cat => (
@@ -714,7 +811,7 @@ const Admin = () => {
                       </label>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <button type="submit" disabled={savingEdit} className="w-full px-4 py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all">{savingEdit ? 'Saving...' : 'Save'}</button>
+                      <button type="submit" disabled={savingEdit} className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all">{savingEdit ? 'Saving...' : 'Save'}</button>
                       <button type="button" className="w-full px-4 py-2 rounded bg-gray-200 text-black font-bold hover:bg-gray-300 transition-all" onClick={() => setEditProduct(null)}>Cancel</button>
                   </div>
                   </form>
@@ -725,9 +822,9 @@ const Admin = () => {
         )}
         {activePanel === 'offers' && (
           <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: COLOR_SECONDARY }}>Offers Management</h1>
+            <h1 className="text-3xl font-bold mb-6 text-primary">Offers Management</h1>
             <div className="flex justify-end mb-6">
-              <button className="px-6 py-2 rounded bg-yellow-400 text-black font-bold shadow hover:bg-yellow-500 transition-all"
+              <button className="px-6 py-2 rounded bg-primary text-primary-foreground font-bold shadow hover:bg-primary/80 transition-all"
                 onClick={() => { setAddOfferOpen(true); setOfferForm({ title: '', description: '', discount: '', products: [], durationType: 'day', durationValue: 1 }); }}>
                 + Add Offer
               </button>
@@ -739,28 +836,27 @@ const Admin = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {offers.map(offer => (
-                  <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden flex flex-col items-center text-center">
-                    <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-all animate-pulse" />
-                    <h2 className="text-xl font-bold mb-2 text-yellow-700">{offer.title}</h2>
-                    <p className="text-gray-700 mb-2">{offer.description}</p>
+                  <div key={offer.id} className="relative bg-card rounded-xl shadow-xl p-6 border-2 border-border hover:shadow-2xl transition-all group overflow-hidden flex flex-col items-center text-center">
+                    <h2 className="text-xl font-bold mb-2 text-card-foreground">{offer.title}</h2>
+                    <p className="text-muted-foreground mb-2">{offer.description}</p>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {offer.products.map(pid => {
                         const prod = products.find(p => p.id === pid);
                         return prod ? (
-                          <img key={pid} src={prod.image} alt={prod.name} className="w-12 h-12 object-cover rounded shadow border-2 border-yellow-300" />
+                          <img key={pid} src={prod.image} alt={prod.name} className="w-12 h-12 object-cover rounded shadow border-2 border-border" />
                         ) : null;
                       })}
                     </div>
                     <div className="mb-2">
-                      <span className="font-bold text-yellow-600">Discount: {offer.discount}%</span>
+                      <span className="font-bold text-primary">Discount: {offer.discount}%</span>
                     </div>
                     <div className="mb-2">
-                      <span className="text-xs text-gray-500">Duration: {offer.durationValue} {offer.durationType}</span>
+                      <span className="text-xs text-muted-foreground">Duration: {offer.durationValue} {offer.durationType}</span>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <button className="px-4 py-1 rounded bg-yellow-400 text-black font-bold shadow hover:bg-yellow-500 transition-all"
+                      <button className="px-4 py-1 rounded bg-primary text-primary-foreground font-bold shadow hover:bg-primary/80 transition-all"
                         onClick={() => handleEditOffer(offer)}>Edit</button>
-                      <button className="px-4 py-1 rounded bg-red-500 text-white font-bold shadow hover:bg-red-600 transition-all"
+                      <button className="px-4 py-1 rounded bg-destructive text-destructive-foreground font-bold shadow hover:bg-destructive/80 transition-all"
                         onClick={() => handleDeleteOffer(offer.id)}>Delete</button>
                     </div>
                   </div>
@@ -781,7 +877,7 @@ const Admin = () => {
                     <div className="flex flex-wrap gap-2">
                       {products.map(prod => (
                         <button type="button" key={prod.id}
-                          className={`border-2 rounded p-1 ${offerForm.products.includes(prod.id) ? 'border-yellow-500 bg-yellow-100' : 'border-gray-200'}`}
+                          className={`border-2 rounded p-1 ${offerForm.products.includes(prod.id) ? 'border-primary bg-primary/10' : 'border-border'}`}
                           onClick={() => handleOfferProductsChange(prod.id)}>
                           <img src={prod.image} alt={prod.name} className="w-10 h-10 object-cover rounded" />
                           <div className="text-xs">{prod.name}</div>
@@ -791,7 +887,7 @@ const Admin = () => {
                   </div>
                   <div>
                     <label className="block font-semibold mb-1">Duration</label>
-                    <select name="durationType" value={offerForm.durationType} onChange={handleOfferChange} className="border rounded px-2 py-1 mr-2">
+                    <select name="durationType" value={offerForm.durationType} onChange={handleOfferChange} className="border border-border rounded px-2 py-1 mr-2">
                       <option value="day">Day</option>
                       <option value="week">Week</option>
                       <option value="month">Month</option>
@@ -800,7 +896,7 @@ const Admin = () => {
                     <Input name="durationValue" type="number" min={1} value={offerForm.durationValue} onChange={handleOfferChange} className="inline w-24" />
                   </div>
                   <div className="flex gap-2 mt-2">
-                    <button type="submit" disabled={savingOffer} className="w-full px-4 py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all">{savingOffer ? 'Saving...' : 'Save'}</button>
+                    <button type="submit" disabled={savingOffer} className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all">{savingOffer ? 'Saving...' : 'Save'}</button>
                     <button type="button" className="w-full px-4 py-2 rounded bg-gray-200 text-black font-bold hover:bg-gray-300 transition-all" onClick={() => { setAddOfferOpen(false); setEditOffer(null); }}>Cancel</button>
                   </div>
                 </form>
@@ -810,9 +906,9 @@ const Admin = () => {
         )}
         {activePanel === 'coupons' && (
           <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: COLOR_HIGHLIGHT }}>Coupons Management</h1>
+            <h1 className="text-3xl font-bold mb-6 text-primary">Coupons Management</h1>
             <div className="flex justify-end mb-6">
-              <button className="px-6 py-2 rounded bg-yellow-400 text-black font-bold shadow hover:bg-yellow-500 transition-all" onClick={() => setAddCouponOpen(true)}>+ Add Coupon</button>
+              <button className="px-6 py-2 rounded bg-primary text-primary-foreground font-bold shadow hover:bg-primary/80 transition-all" onClick={() => setAddCouponOpen(true)}>+ Add Coupon</button>
             </div>
             {loadingCoupons ? (
               <div className="text-center py-8 text-gray-400">Loading...</div>
@@ -820,9 +916,9 @@ const Admin = () => {
               <div className="text-center py-8 text-gray-400">No coupons found.</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border rounded-lg shadow text-xs sm:text-sm">
+                <table className="min-w-full bg-card border rounded-lg shadow text-xs sm:text-sm">
                   <thead>
-                    <tr className="bg-yellow-100">
+                    <tr className="bg-muted">
                       <th className="px-4 py-2">Code</th>
                       <th className="px-4 py-2">Discount</th>
                       <th className="px-4 py-2">Type</th>
@@ -835,7 +931,7 @@ const Admin = () => {
                   </thead>
                   <tbody>
                     {coupons.map(coupon => (
-                      <tr key={coupon.id} className="border-b hover:bg-yellow-50">
+                      <tr key={coupon.id} className="border-b hover:bg-muted">
                         <td className="px-4 py-2 font-mono font-bold">{coupon.code}</td>
                         <td className="px-4 py-2">{coupon.discount}</td>
                         <td className="px-4 py-2">{coupon.type}</td>
@@ -844,8 +940,8 @@ const Admin = () => {
                         <td className="px-4 py-2">{coupon.expiresAt ? (new Date(coupon.expiresAt.seconds ? coupon.expiresAt.seconds * 1000 : coupon.expiresAt)).toLocaleDateString() : '-'}</td>
                         <td className="px-4 py-2">{coupon.active ? 'Yes' : 'No'}</td>
                         <td className="px-4 py-2">
-                          <button className="px-3 py-1 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all mr-2" onClick={() => handleEditCouponClick(coupon)}>Edit</button>
-                          <button className="px-3 py-1 rounded bg-red-500 text-white font-bold hover:bg-red-600 transition-all" onClick={() => handleDeleteCoupon(coupon.id)}>Delete</button>
+                          <button className="px-3 py-1 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all mr-2" onClick={() => handleEditCouponClick(coupon)}>Edit</button>
+                          <button className="px-3 py-1 rounded bg-destructive text-destructive-foreground font-bold hover:bg-destructive/80 transition-all" onClick={() => handleDeleteCoupon(coupon.id)}>Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -861,7 +957,7 @@ const Admin = () => {
                   <h2 className="text-xl font-bold mb-2">Add Coupon</h2>
                   <Input name="code" placeholder="Code" value={couponForm.code} onChange={handleCouponChange} required />
                   <Input name="discount" type="number" placeholder="Discount" value={couponForm.discount} onChange={handleCouponChange} required />
-                  <select name="type" value={couponForm.type} onChange={handleCouponChange} className="border border-gray-200 rounded px-3 py-2 w-full">
+                  <select name="type" value={couponForm.type} onChange={handleCouponChange} className="border border-border rounded px-3 py-2 w-full">
                     <option value="percent">Percent</option>
                     <option value="fixed">Fixed</option>
                   </select>
@@ -872,7 +968,7 @@ const Admin = () => {
                     Active
                   </label>
                   <div className="flex gap-2 mt-2">
-                    <button type="submit" disabled={savingCoupon} className="w-full px-4 py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all">{savingCoupon ? 'Saving...' : 'Save'}</button>
+                    <button type="submit" disabled={savingCoupon} className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all">{savingCoupon ? 'Saving...' : 'Save'}</button>
                     <button type="button" className="w-full px-4 py-2 rounded bg-gray-200 text-black font-bold hover:bg-gray-300 transition-all" onClick={() => setAddCouponOpen(false)}>Cancel</button>
                       </div>
                 </form>
@@ -887,7 +983,7 @@ const Admin = () => {
                     <h2 className="text-xl font-bold mb-2">Edit Coupon</h2>
                     <Input name="code" placeholder="Code" value={couponForm.code} onChange={handleCouponChange} required />
                     <Input name="discount" type="number" placeholder="Discount" value={couponForm.discount} onChange={handleCouponChange} required />
-                    <select name="type" value={couponForm.type} onChange={handleCouponChange} className="border border-gray-200 rounded px-3 py-2 w-full">
+                    <select name="type" value={couponForm.type} onChange={handleCouponChange} className="border border-border rounded px-3 py-2 w-full">
                       <option value="percent">Percent</option>
                       <option value="fixed">Fixed</option>
                     </select>
@@ -898,7 +994,7 @@ const Admin = () => {
                       Active
                     </label>
                     <div className="flex gap-2 mt-2">
-                      <button type="submit" disabled={savingCoupon} className="w-full px-4 py-2 rounded bg-yellow-400 text-black font-bold hover:bg-yellow-500 transition-all">{savingCoupon ? 'Saving...' : 'Save'}</button>
+                      <button type="submit" disabled={savingCoupon} className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/80 transition-all">{savingCoupon ? 'Saving...' : 'Save'}</button>
                       <button type="button" className="w-full px-4 py-2 rounded bg-gray-200 text-black font-bold hover:bg-gray-300 transition-all" onClick={() => setEditCoupon(null)}>Cancel</button>
                     </div>
                   </form>
@@ -909,16 +1005,16 @@ const Admin = () => {
         )}
         {activePanel === 'orders' && (
           <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: COLOR_PRIMARY }}>Orders Panel</h1>
+            <h1 className="text-3xl font-bold mb-6 text-primary">Orders Panel</h1>
             {loadingOrders ? (
               <div className="text-center py-8 text-gray-400">Loading...</div>
             ) : orders.length === 0 ? (
               <div className="text-center py-8 text-gray-400">No orders found.</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border rounded-lg shadow text-xs sm:text-sm">
+                <table className="min-w-full bg-card border rounded-lg shadow text-xs sm:text-sm">
                   <thead>
-                    <tr className="bg-yellow-100">
+                    <tr className="bg-muted">
                       <th className="px-4 py-2">Customer</th>
                       <th className="px-4 py-2">Phone</th>
                       <th className="px-4 py-2">Address</th>
@@ -932,7 +1028,7 @@ const Admin = () => {
                   </thead>
                   <tbody>
                     {orders.map(order => (
-                      <tr key={order.id} className="border-b hover:bg-yellow-50">
+                      <tr key={order.id} className="border-b hover:bg-muted">
                         <td className="px-4 py-2">{order.name}</td>
                         <td className="px-4 py-2">{order.phone}</td>
                         <td className="px-4 py-2">{order.address}</td>
@@ -941,35 +1037,42 @@ const Admin = () => {
                           {Array.isArray(order.items) ? order.items.map((item, idx) => (
                             <span key={idx}>
                               {item.name}
-                              <span style={{ color: '#ffa200', fontWeight: 'bold' }}>
+                              <span className="text-primary font-bold">
                                 {typeof item.flavor !== 'undefined' && item.flavor !== '' ? ` (${item.flavor})` : ' (بدون نكهة)'}
                               </span>
-                              <span style={{ color: '#000', fontWeight: 'bold' }}> x{item.quantity || 1}</span>
+                              <span className="text-foreground font-bold"> x{item.quantity || 1}</span>
                               {idx < order.items.length - 1 ? ', ' : ''}
                             </span>
                           )) : '-'}
                         </td>
                         <td className="px-4 py-2 font-bold">{order.total} EGP</td>
-                        <td className="px-4 py-2 text-xs">{order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds * 1000 : order.createdAt)).toLocaleString() : '-'}</td>
+                        <td className="px-4 py-2 text-xs">
+                          {order.createdAt
+                            ? (typeof order.createdAt === 'object' && 'seconds' in order.createdAt
+                                ? new Date(order.createdAt.seconds * 1000)
+                                : new Date(order.createdAt instanceof Date ? order.createdAt : String(order.createdAt))
+                              ).toLocaleString()
+                            : '-'}
+                        </td>
                         <td className="px-4 py-2">{order.status || 'Pending'}</td>
                         <td className="px-4 py-2">
                           <div className="flex gap-2 flex-wrap">
                             <button
-                              className={`px-3 py-1 rounded text-white font-bold transition-all text-sm ${order.status === 'Confirmed' ? 'bg-green-700' : 'bg-green-500 hover:bg-green-600'}`}
+                              className={`px-3 py-1 rounded bg-primary text-primary-foreground font-bold transition-all text-sm hover:bg-primary/80`}
                               onClick={() => handleConfirmOrder(order.id)}
                               disabled={loadingOrders}
                             >
                               Confirm
                             </button>
                             <button
-                              className={`px-3 py-1 rounded text-white font-bold transition-all text-sm ${order.status === 'Delivered' ? 'bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'}`}
+                              className={`px-3 py-1 rounded bg-muted text-foreground font-bold transition-all text-sm hover:bg-muted/80`}
                               onClick={() => handleDeliveredOrder(order.id)}
                               disabled={loadingOrders}
                             >
                               وصل
                             </button>
                             <button
-                              className="px-3 py-1 rounded bg-red-500 text-white font-bold hover:bg-red-600 transition-all text-sm"
+                              className="px-3 py-1 rounded bg-destructive text-destructive-foreground font-bold hover:bg-destructive/80 transition-all text-sm"
                               onClick={() => handleDeleteOrder(order.id)}
                               disabled={loadingOrders}
                             >
@@ -987,26 +1090,26 @@ const Admin = () => {
         )}
         {activePanel === 'stats' && (
           <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: COLOR_SECONDARY }}>Stats & Reports</h1>
+            <h1 className="text-3xl font-bold mb-6 text-primary">Stats & Reports</h1>
             {loadingStats ? (
               <div className="text-center py-8 text-gray-400">Loading...</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                <div className="bg-yellow-100 rounded-xl shadow p-6 flex flex-col items-center">
-                  <div className="text-4xl font-bold mb-2" style={{ color: COLOR_PRIMARY }}>{stats.totalOrders}</div>
-                  <div className="text-lg font-semibold">Total Orders</div>
+                <div className="bg-card rounded-xl shadow p-6 flex flex-col items-center border border-border">
+                  <div className="text-4xl font-bold mb-2 text-primary">{stats.totalOrders}</div>
+                  <div className="text-lg font-semibold text-muted-foreground">Total Orders</div>
                 </div>
-                <div className="bg-yellow-100 rounded-xl shadow p-6 flex flex-col items-center">
-                  <div className="text-4xl font-bold mb-2" style={{ color: COLOR_SECONDARY }}>{stats.totalSales} EGP</div>
-                  <div className="text-lg font-semibold">Total Sales</div>
+                <div className="bg-card rounded-xl shadow p-6 flex flex-col items-center border border-border">
+                  <div className="text-4xl font-bold mb-2 text-primary">{stats.totalSales} EGP</div>
+                  <div className="text-lg font-semibold text-muted-foreground">Total Sales</div>
                 </div>
-                <div className="bg-yellow-100 rounded-xl shadow p-6 flex flex-col items-center">
-                  <div className="text-4xl font-bold mb-2 text-green-600">{stats.confirmedOrders}</div>
-                  <div className="text-lg font-semibold">Confirmed Orders</div>
+                <div className="bg-card rounded-xl shadow p-6 flex flex-col items-center border border-border">
+                  <div className="text-4xl font-bold mb-2 text-primary">{stats.confirmedOrders}</div>
+                  <div className="text-lg font-semibold text-muted-foreground">Confirmed Orders</div>
                 </div>
-                <div className="bg-yellow-100 rounded-xl shadow p-6 flex flex-col items-center">
-                  <div className="text-4xl font-bold mb-2 text-blue-600">{stats.deliveredOrders}</div>
-                  <div className="text-lg font-semibold">Delivered Orders</div>
+                <div className="bg-card rounded-xl shadow p-6 flex flex-col items-center border border-border">
+                  <div className="text-4xl font-bold mb-2 text-primary">{stats.deliveredOrders}</div>
+                  <div className="text-lg font-semibold text-muted-foreground">Delivered Orders</div>
                 </div>
               </div>
             )}

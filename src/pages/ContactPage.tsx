@@ -13,8 +13,8 @@ const CONTACTS = [
   },
   {
     label: 'Email',
-    value: 'elitesupps101@gmail.com',
-    href: 'mailto:elitesupps101@gmail.com',
+    value: 'musclesaction101@gmail.com',
+    href: 'mailto:musclesaction101@gmail.com',
     icon: (
       <svg width="40" height="40" fill="none" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#1877F2" fillOpacity="0.1"/><path d="M12 15.5A2.5 2.5 0 0 1 14.5 13h11A2.5 2.5 0 0 1 28 15.5v9A2.5 2.5 0 0 1 25.5 27h-11A2.5 2.5 0 0 1 12 24.5v-9Zm2.5-.5a.5.5 0 0 0-.5.5v.2l7 4.67 7-4.67v-.2a.5.5 0 0 0-.5-.5h-11Zm11.5 2.3-6.6 4.4a1 1 0 0 1-1.1 0l-6.6-4.4V24.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V17.3Z" fill="#1877F2"/></svg>
     )

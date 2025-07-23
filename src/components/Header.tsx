@@ -14,12 +14,13 @@ import { useCart } from '@/contexts/CartContext';
 import { 
   Home, 
   Menu, 
-  Search, 
   ShoppingCart, 
   User, 
   Globe, 
   Percent,
-  Sparkles
+  Sparkles,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -61,15 +62,12 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
+    <header className="sticky top-0 z-50 w-full bg-[#f6f6f6]/95 backdrop-blur supports-[backdrop-filter]:bg-[#f6f6f6]/60 border-b border-[#b0b0b0] shadow-lg transition-all duration-500">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <img src="/logo.jpg" alt="Elite Supps" className="h-10 w-auto" />
-            <span className="text-xl font-bold bg-gradient-elite bg-clip-text text-transparent">
-              {t('eliteSupps')}
-            </span>
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-100 transition-opacity animate-float">
+            <img src="/logo.jpg" alt="Muscles Action" className="h-14 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
           </Link>
 
           {/* Navigation */}
@@ -89,21 +87,9 @@ const Header = () => {
             })}
           </nav>
 
-          {/* Search, Cart, Profile, Language */}
+          {/* Cart, Profile, Language, Dark Mode */}
           <div className="flex items-center space-x-4">
-            {/* Search */}
-            <form onSubmit={handleSearch} className="hidden sm:flex items-center">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder={t('search')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-64 focus:ring-elite-primary focus:border-elite-primary"
-                />
-              </div>
-            </form>
+            
 
             {/* Cart */}
             <Link to="/cart">

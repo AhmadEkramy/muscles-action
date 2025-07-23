@@ -20,14 +20,14 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-elite-dark text-white">
+    <footer className="bg-[#000] text-[#f6f6f6] py-12 mt-16 border-t border-[#b0b0b0] shadow-2xl transition-all duration-500">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <img src="/logo.jpg" alt="Elite Supps" className="h-10 w-auto" />
-              <span className="text-xl font-bold bg-gradient-elite bg-clip-text text-transparent">
+            <div className="flex items-center space-x-3 animate-float">
+              <img src="/logo.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
+              <span className="text-xl font-bold text-[#4f4f4f] drop-shadow-[0_2px_8px_#888888]">
                 {t('eliteSupps')}
               </span>
             </div>
@@ -153,8 +153,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-white/60 text-sm">
             {language === 'ar' 
-              ? '© 2024 إيليت سابس. جميع الحقوق محفوظة.'
-              : '© 2024 Elite Supps. All rights reserved.'
+              ? '© 2024 ماسيلز أكشن. جميع الحقوق محفوظة.'
+              : '© 2024 Muscles Action. All rights reserved.'
             }
           </p>
           <div className="flex space-x-6">

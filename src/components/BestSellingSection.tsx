@@ -33,8 +33,9 @@ const BestSellingSection = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-elite bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#3d3d3d] drop-shadow-[0_2px_8px_#b0b0b0] relative">
               {t('bestSelling')}
+              <span className="block h-1 w-2/3 bg-gradient-to-r from-[#b0b0b0] to-[#4f4f4f] rounded-full mt-2 mx-auto animate-fade-in-up"></span>
             </h2>
             <p className="text-muted-foreground max-w-2xl">
               {language === 'ar' 

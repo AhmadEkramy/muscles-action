@@ -80,22 +80,22 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fff]">
+    <div className="min-h-screen flex flex-col bg-background">
       <div className="max-w-2xl mx-auto w-full px-2 pt-4 sm:pt-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
           <button
-            className="flex items-center gap-1 px-4 py-2 rounded bg-white border border-gray-200 hover:bg-gray-50 transition mr-2"
+            className="flex items-center gap-1 px-4 py-2 rounded bg-card border border-border hover:bg-muted transition mr-2"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-5 h-5" />
             Back
           </button>
-          <h1 className="text-3xl font-extrabold text-yellow-400 ml-2">Checkout</h1>
+          <h1 className="text-3xl font-extrabold text-primary ml-2">Checkout</h1>
         </div>
-        <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl shadow p-4 sm:p-8 flex flex-col gap-4 sm:gap-6">
+        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl shadow p-4 sm:p-8 flex flex-col gap-4 sm:gap-6">
           <h2 className="text-xl sm:text-2xl font-bold mb-2">Order Information</h2>
           <div>
-            <label className="block font-semibold mb-1">Full Name <span className="text-yellow-400">*</span></label>
+            <label className="block font-semibold mb-1">Full Name <span className="text-primary">*</span></label>
             <input
               name="name"
               type="text"
@@ -103,11 +103,11 @@ const Checkout = () => {
               value={form.name}
               onChange={handleChange}
               required
-              className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+              className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
             />
           </div>
           <div>
-            <label className="block font-semibold mb-1">Address <span className="text-yellow-400">*</span></label>
+            <label className="block font-semibold mb-1">Address <span className="text-primary">*</span></label>
             <input
               name="address"
               type="text"
@@ -115,11 +115,11 @@ const Checkout = () => {
               value={form.address}
               onChange={handleChange}
               required
-              className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+              className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
             />
           </div>
           <div>
-            <label className="block font-semibold mb-1">Phone Number <span className="text-yellow-400">*</span></label>
+            <label className="block font-semibold mb-1">Phone Number <span className="text-primary">*</span></label>
             <input
               name="phone"
               type="tel"
@@ -131,7 +131,7 @@ const Checkout = () => {
                 setForm(f => ({ ...f, phone: value }));
               }}
               required
-              className="border border-gray-200 rounded px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+              className="border border-border rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none"
               inputMode="numeric"
               pattern="[0-9]*"
               maxLength={15}
@@ -143,7 +143,7 @@ const Checkout = () => {
               {paymentMethods.map((method) => (
                 <label
                   key={method.value}
-                  className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.payment === method.value ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-white hover:border-yellow-200'}`}
+                  className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.payment === method.value ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/20'}`}
                 >
                   <input
                     type="radio"
@@ -151,27 +151,27 @@ const Checkout = () => {
                     value={method.value}
                     checked={form.payment === method.value}
                     onChange={handleChange}
-                    className="accent-yellow-400 w-5 h-5"
+                    className="accent-primary w-5 h-5"
                   />
-                  <span className="text-yellow-400 text-xl">{method.icon}</span>
-                  <span className={`font-semibold text-base ${form.payment === method.value ? 'text-yellow-500' : 'text-black'}`}>{method.label}</span>
+                  <span className="text-primary text-xl">{method.icon}</span>
+                  <span className={`font-semibold text-base ${form.payment === method.value ? 'text-primary' : 'text-foreground'}`}>{method.label}</span>
                 </label>
               ))}
             </div>
           </div>
-          {error && <div className="text-red-500 text-center">{error}</div>}
+          {error && <div className="text-destructive text-center">{error}</div>}
           <button
             type="submit"
             disabled={loading}
-            className="mt-4 bg-yellow-400 text-black font-bold py-3 sm:py-2 rounded hover:bg-yellow-500 transition-all text-base sm:text-lg"
+            className="mt-4 bg-primary text-primary-foreground font-bold py-3 sm:py-2 rounded hover:bg-primary/80 transition-all text-base sm:text-lg"
           >
             {loading ? 'جاري التنفيذ...' : 'Place Order'}
           </button>
         </form>
         {showSuccess && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 text-center">
-              <h2 className="text-xl sm:text-2xl font-bold mb-2 text-green-600">تم الطلب بنجاح!</h2>
+          <div className="fixed inset-0 flex items-center justify-center bg-background/80 z-50">
+            <div className="bg-card rounded-lg shadow-lg p-4 sm:p-8 text-center">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2 text-primary">تم الطلب بنجاح!</h2>
               <p className="text-base sm:text-lg">Order placed successfully!</p>
             </div>
           </div>

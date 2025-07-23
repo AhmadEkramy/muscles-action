@@ -19,45 +19,51 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				border: '#b0b0b0',
+				input: '#f6f6f6',
+				ring: '#888888',
+				background: '#f6f6f6',
+				foreground: '#000',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#4f4f4f',
+					foreground: '#f6f6f6',
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
-				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: '#888888',
+					foreground: '#f6f6f6',
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: '#b0b0b0',
+					foreground: '#f6f6f6',
 				},
-				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+				muted: {
+					DEFAULT: '#f6f6f6',
+					foreground: '#888888',
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#f6f6f6',
+					foreground: '#000',
 				},
-				// Elite Supps Brand Colors
-				elite: {
-					primary: 'hsl(var(--elite-primary))',
-					secondary: 'hsl(var(--elite-secondary))',
-					highlight: 'hsl(var(--elite-highlight))',
-					dark: 'hsl(var(--elite-dark))'
+				popover: {
+					DEFAULT: '#f6f6f6',
+					foreground: '#000',
+				},
+				destructive: {
+					DEFAULT: '#000',
+					foreground: '#f6f6f6',
+				},
+				brand: {
+					lightest: '#f6f6f6',
+					lighter: '#e7e7e7',
+					light: '#d1d1d1',
+					medium: '#b0b0b0',
+					gray: '#888888',
+					dark: '#6d6d6d',
+					darker: '#5d5d5d',
+					darkest: '#4f4f4f',
+					deep: '#454545',
+					deeper: '#3d3d3d',
+					black: '#000000',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

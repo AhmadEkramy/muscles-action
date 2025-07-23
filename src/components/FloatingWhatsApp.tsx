@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 const FloatingWhatsApp = () => {
   const phoneNumber = '+201016407640'; // Updated WhatsApp number
-  const message = 'Hello! I need help with Elite Supps products.';
+  const message = 'Hello! I need help with Muscles Action products.';
   
   const openWhatsApp = () => {
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

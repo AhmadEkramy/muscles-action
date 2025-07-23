@@ -1,4 +1,4 @@
-# Elite Supps E-Commerce Platform
+# Muscles Action E-Commerce Platform
 
 A modern, fully responsive e-commerce web app for supplements, supporting Arabic & English, with a complete admin dashboard, Firestore integration, offers, coupons, orders, and a mobile-friendly UI.
 
@@ -66,7 +66,6 @@ npm run dev
 
 ## Deployment
 - Deploy with Vercel, Netlify, or your preferred provider
-- Or use [Lovable](https://lovable.dev/projects/751f079d-79b4-4d8a-824c-6398782ab2bc) for instant publishing
 
 ---
 
@@ -84,5 +83,3 @@ npm run dev
 This project is production-ready and can be customized for your business needs.
 
 ---
-
-For more info, contact: elitesupps101@gmail.com

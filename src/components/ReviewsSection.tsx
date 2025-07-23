@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const reviews = [
   {
@@ -81,7 +81,7 @@ const ReviewsSection = () => {
     <section className="py-16" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container mx-auto px-4">
         <div className={`mb-12 ${language === 'ar' ? 'text-right' : 'text-center'}`}>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-elite bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
             {t('customerReviews')}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">

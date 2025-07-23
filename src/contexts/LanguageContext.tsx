@@ -27,7 +27,7 @@ const translations = {
     // Hero
     shopNow: 'Shop Now',
     premiumSupplements: 'Premium Supplements',
-    eliteSupps: 'Elite Supps',
+    eliteSupps: 'Muscles Action',
     
     // Categories
     protein: 'Protein',
@@ -108,7 +108,7 @@ const translations = {
     // Hero
     shopNow: 'تسوق الآن',
     premiumSupplements: 'مكملات غذائية فاخرة',
-    eliteSupps: 'إيليت سابس',
+    eliteSupps: 'ماسيلز أكشن',
     
     // Categories
     protein: 'بروتين',
