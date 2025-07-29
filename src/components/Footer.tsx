@@ -110,11 +110,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-elite-primary" />
-                <span className="text-white/80 text-sm">+201016407640</span>
+                <span className="text-white/80 text-sm">+201027226728</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-elite-primary" />
-                <span className="text-white/80 text-sm">elitesupps101@gmail.com</span>
+                <span className="text-white/80 text-sm">Musclesaction23@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-elite-primary" />
@@ -127,19 +127,19 @@ const Footer = () => {
             {/* Social Media */}
             <div className="flex space-x-4 pt-4">
               <a 
-                href="#" 
+                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a 
-                href="#" 
+                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
-                href="#" 
+                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Twitter className="h-5 w-5" />
@@ -153,8 +153,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-white/60 text-sm">
             {language === 'ar' 
-              ? '© 2024 ماسيلز أكشن. جميع الحقوق محفوظة.'
-              : '© 2024 Muscles Action. All rights reserved.'
+              ? '© 2025 ماسيلز أكشن. جميع الحقوق محفوظة.'
+              : '© 2025 Muscles Action. All rights reserved.'
             }
           </p>
           <div className="flex space-x-6">

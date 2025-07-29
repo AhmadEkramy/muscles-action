@@ -11,30 +11,30 @@ const slides = [
   {
     id: 1,
     image: heroProtein,
-    title: 'Premium Protein Collection',
-    titleAr: 'مجموعة البروتين الفاخرة',
-    subtitle: 'Build Muscle. Recover Faster.',
-    subtitleAr: 'ابن العضلات. تعافى أسرع.',
+    title: '',
+    titleAr: '',
+    subtitle: '',
+    subtitleAr: '',
     cta: 'Shop Protein',
     ctaAr: 'تسوق البروتين'
   },
   {
     id: 2,
     image: heroBestseller,
-    title: 'Best Selling Supplements',
-    titleAr: 'المكملات الأكثر مبيعاً',
-    subtitle: 'Trusted by Athletes Worldwide',
-    subtitleAr: 'موثوق من الرياضيين حول العالم',
+    title: '',
+    titleAr: '',
+    subtitle: '',
+    subtitleAr: '',
     cta: 'View Best Sellers',
     ctaAr: 'عرض الأكثر مبيعاً'
   },
   {
     id: 3,
     image: heroBundle,
-    title: 'Exclusive Bundles',
-    titleAr: 'حزم حصرية',
-    subtitle: 'Save More. Achieve More.',
-    subtitleAr: 'وفر أكثر. حقق أكثر.',
+    title: '',
+    titleAr: '',
+    subtitle: '',
+    subtitleAr: '',
     cta: 'Shop Bundles',
     ctaAr: 'تسوق الحزم'
   }
@@ -64,28 +64,19 @@ const Hero = () => {
   const currentSlideData = slides[currentSlide];
 
   return (
-    <section className="relative h-[70vh] min-h-[500px] overflow-hidden bg-gradient-to-br from-elite-primary/20 via-background to-elite-secondary/20">
+    <section className="relative w-full h-screen overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out"
+        className="absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{ 
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentSlideData.image})` 
+          backgroundImage: `url(${currentSlideData.image})` 
         }}
       />
 
       {/* Content Overlay */}
-      <div className="relative z-10 flex items-center justify-center h-full">
-        <div className="text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-up">
-            <span className="bg-gradient-glow bg-clip-text text-transparent">
-              {language === 'ar' ? currentSlideData.titleAr : currentSlideData.title}
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl mb-8 text-white/90 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            {language === 'ar' ? currentSlideData.subtitleAr : currentSlideData.subtitle}
-          </p>
-          
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
+        <div className="text-center text-white">
+          {/* Button only, no text */}
           <Button 
             size="lg" 
             className="bg-gradient-elite text-elite-dark font-bold px-8 py-6 text-lg rounded-xl hover:shadow-hover transition-all duration-300 hover:scale-105 animate-slide-up"

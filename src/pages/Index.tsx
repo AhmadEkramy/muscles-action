@@ -4,7 +4,7 @@ import Hero from '@/components/Hero';
 import CategorySection from '@/components/CategorySection';
 import BestSellingSection from '@/components/BestSellingSection';
 import LatestProductsSection from '@/components/LatestProductsSection';
-import ReviewsSection from '@/components/ReviewsSection';
+// Removed ReviewsSection import
 import Footer from '@/components/Footer';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import { db } from '@/lib/utils';
@@ -186,7 +186,7 @@ const Index = () => {
           </div>
         </section>
 
-        <ReviewsSection />
+        {/* Removed ReviewsSection component */}
       </main>
       <Footer />
       <FloatingWhatsApp />

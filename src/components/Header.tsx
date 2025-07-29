@@ -68,6 +68,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 hover:opacity-100 transition-opacity animate-float">
             <img src="/logo.jpg" alt="Muscles Action" className="h-14 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
+            <span className="text-xl font-bold text-[#4f4f4f]">Muscles Action</span>
           </Link>
 
           {/* Navigation */}

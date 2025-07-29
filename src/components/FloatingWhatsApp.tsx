@@ -3,7 +3,7 @@ import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const FloatingWhatsApp = () => {
-  const phoneNumber = '+201016407640'; // Updated WhatsApp number
+  const phoneNumber = '+201027226728'; // Updated WhatsApp number
   const message = 'Hello! I need help with Muscles Action products.';
   
   const openWhatsApp = () => {
