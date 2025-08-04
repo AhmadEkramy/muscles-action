@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import BestSellingSection from '@/components/BestSellingSection';
+import CategorySection from '@/components/CategorySection';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import CategorySection from '@/components/CategorySection';
-import BestSellingSection from '@/components/BestSellingSection';
-import LatestProductsSection from '@/components/LatestProductsSection';
+import { useEffect, useState } from 'react';
 // Removed ReviewsSection import
-import Footer from '@/components/Footer';
+import heroProtein from '@/assets/hero-protein.jpg';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
+import Footer from '@/components/Footer';
+import { useCart } from '@/contexts/CartContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { db } from '@/lib/utils';
 import { collection, getDocs } from 'firebase/firestore';
-import { useCart } from '@/contexts/CartContext';
 import { Heart } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import heroProtein from '@/assets/hero-protein.jpg';
-import heroProtein2 from '@/assets/hero-protein2.jpg';
 import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
@@ -58,25 +56,15 @@ const Index = () => {
 
         {/* Showcase Section */}
         <section className="my-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex justify-center">
             <div
               onClick={() => navigate('/menu')}
-              className="overflow-hidden rounded-3xl cursor-pointer group"
+              className="overflow-hidden rounded-3xl cursor-pointer group w-full"
             >
               <img
                 src={heroProtein}
                 alt="Hero Protein 1"
-                className="w-full h-[400px] object-cover object-center transition-transform duration-300 group-hover:scale-105 group-hover:shadow-2xl"
-              />
-            </div>
-            <div
-              onClick={() => navigate('/menu')}
-              className="overflow-hidden rounded-3xl cursor-pointer group"
-            >
-              <img
-                src={heroProtein2}
-                alt="Hero Protein 2"
-                className="w-full h-[400px] object-cover object-center transition-transform duration-300 group-hover:scale-105 group-hover:shadow-2xl"
+                className="w-full h-auto object-contain object-center transition-transform duration-300 group-hover:scale-105 group-hover:shadow-2xl"
               />
             </div>
           </div>

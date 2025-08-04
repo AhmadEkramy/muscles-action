@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Button } from '@/components/ui/button';
+import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   const { language, t } = useLanguage();
@@ -110,7 +110,14 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-elite-primary" />
-                <span className="text-white/80 text-sm">+201027226728</span>
+                <a 
+                  href="https://wa.me/201027226728" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/80 hover:text-elite-primary transition-colors text-sm cursor-pointer hover:underline"
+                >
+                  +201027226728
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-elite-primary" />
