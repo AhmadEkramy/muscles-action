@@ -1,24 +1,24 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useCart } from '@/contexts/CartContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import {
-    Globe,
-    Home,
-    Menu,
-    Percent,
-    ShoppingCart,
-    Sparkles,
-    User,
-    X
+  Globe,
+  Home,
+  Menu,
+  Percent,
+  ShoppingCart,
+  Sparkles,
+  User,
+  X
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -85,7 +85,7 @@ const Header = () => {
             {/* Center Section - Logo with text underneath (Desktop only) */}
             <div className="flex-shrink-0 hidden md:block">
               <Link to="/" className="flex flex-col items-center hover:opacity-100 transition-opacity animate-float">
-                <img src="/logo.jpg" alt="Muscles Action" className="h-12 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md mb-1" />
+                <img src="/logo.jpg" alt="Muscles Action" className="h-12 w-auto shadow-md mb-1" />
                 <span className="text-sm font-bold text-[#4f4f4f]">Muscles Action</span>
               </Link>
             </div>
@@ -161,7 +161,7 @@ const Header = () => {
 
               {/* Center - Logo */}
               <Link to="/" className="flex flex-col items-center hover:opacity-100 transition-opacity animate-float">
-                <img src="/logo.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md mb-1" />
+                <img src="/logo.jpg" alt="Muscles Action" className="h-10 w-auto shadow-md mb-1" />
                 <span className="text-xs font-bold text-[#4f4f4f]">Muscles Action</span>
               </Link>
 
