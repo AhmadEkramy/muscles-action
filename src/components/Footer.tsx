@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Facebook, Instagram, Mail, Phone, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3 animate-float">
-              <img src="/logo.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
+              <img src="/logo-white.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
               <span className="text-xl font-bold text-[#4f4f4f] drop-shadow-[0_2px_8px_#888888]">
                 {t('eliteSupps')}
               </span>
@@ -128,7 +128,7 @@ const Footer = () => {
             {/* Social Media */}
             <div className="flex space-x-4 pt-4">
               <a 
-                href="https://www.instagram.com/musclesaction?igsh=MWJuOW1mbzkzMXo5MQ==" 
+                href="https://www.facebook.com/share/16suYWt5UV/?mibextid=wwXIfr" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Facebook className="h-5 w-5" />
@@ -138,12 +138,6 @@ const Footer = () => {
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Instagram className="h-5 w-5" />
-              </a>
-              <a 
-                href="https://www.instagram.com/musclesaction?igsh=MWJuOW1mbzkzMXo5MQ==" 
-                className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
-              >
-                <Twitter className="h-5 w-5" />
               </a>
             </div>
           </div>
