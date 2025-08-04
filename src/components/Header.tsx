@@ -62,32 +62,37 @@ const Header = () => {
     <>
       <header className="sticky top-0 z-50 w-full bg-[#f6f6f6]/95 backdrop-blur supports-[backdrop-filter]:bg-[#f6f6f6]/60 border-b border-[#b0b0b0] shadow-lg transition-all duration-500">
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 hover:opacity-100 transition-opacity animate-float">
-              <img src="/logo.jpg" alt="Muscles Action" className="h-14 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
-              <span className="text-lg sm:text-xl font-bold text-[#4f4f4f]">Muscles Action</span>
-            </Link>
+          <div className="flex h-20 items-center justify-between">
+            {/* Left Section - Navigation */}
+            <div className="flex-1">
+              <nav className="hidden md:flex items-center space-x-6">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.key}
+                      to={item.href}
+                      className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-elite-primary transition-colors duration-200 hover:animate-glow-pulse"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{t(item.key)}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.key}
-                    to={item.href}
-                    className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-elite-primary transition-colors duration-200 hover:animate-glow-pulse"
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{t(item.key)}</span>
-                  </Link>
-                );
-              })}
-            </nav>
+            {/* Center Section - Logo with text underneath (Desktop only) */}
+            <div className="flex-shrink-0 hidden md:block">
+              <Link to="/" className="flex flex-col items-center hover:opacity-100 transition-opacity animate-float">
+                <img src="/logo.jpg" alt="Muscles Action" className="h-12 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md mb-1" />
+                <span className="text-sm font-bold text-[#4f4f4f]">Muscles Action</span>
+              </Link>
+            </div>
 
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-4">
+            {/* Right Section - Actions */}
+            <div className="flex-1 flex justify-end">
+              <div className="hidden md:flex items-center space-x-4">
               {/* Cart */}
               <Link to="/cart">
                 <Button variant="outline" size="sm" className="relative hover:bg-elite-primary/10 hover:border-elite-primary transition-all duration-200">
@@ -139,11 +144,28 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
             </div>
 
-            {/* Mobile Actions */}
-            <div className="flex md:hidden items-center space-x-2">
-              {/* Mobile Cart */}
+            {/* Mobile Layout */}
+            <div className="flex md:hidden w-full items-center justify-between">
+              {/* Left - Hamburger Menu */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="hover:bg-elite-primary/10 hover:border-elite-primary transition-all duration-200"
+              >
+                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </Button>
+
+              {/* Center - Logo */}
+              <Link to="/" className="flex flex-col items-center hover:opacity-100 transition-opacity animate-float">
+                <img src="/logo.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md mb-1" />
+                <span className="text-xs font-bold text-[#4f4f4f]">Muscles Action</span>
+              </Link>
+
+              {/* Right - Cart */}
               <Link to="/cart">
                 <Button variant="outline" size="sm" className="relative hover:bg-elite-primary/10 hover:border-elite-primary transition-all duration-200">
                   <ShoppingCart className="h-4 w-4" />
@@ -157,16 +179,6 @@ const Header = () => {
                   )}
                 </Button>
               </Link>
-
-              {/* Hamburger Menu Button */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="hover:bg-elite-primary/10 hover:border-elite-primary transition-all duration-200"
-              >
-                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </Button>
             </div>
           </div>
         </div>
@@ -176,7 +188,7 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="fixed top-16 left-0 right-0 bg-[#f6f6f6] border-b border-[#b0b0b0] shadow-lg">
+          <div className="fixed top-20 left-0 right-0 bg-[#f6f6f6] border-b border-[#b0b0b0] shadow-lg">
             <div className="container mx-auto px-4 py-4">
               {/* Mobile Navigation */}
               <nav className="space-y-4">

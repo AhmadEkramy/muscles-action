@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { auth } from '@/lib/utils';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, Twitter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -123,30 +123,24 @@ const Footer = () => {
                 <Mail className="h-4 w-4 text-elite-primary" />
                 <span className="text-white/80 text-sm">Musclesaction23@gmail.com</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-4 w-4 text-elite-primary" />
-                <span className="text-white/80 text-sm">
-                  {language === 'ar' ? 'الدقهلية، مصر' : 'Dakahlia, Egypt'}
-                </span>
-              </div>
             </div>
 
             {/* Social Media */}
             <div className="flex space-x-4 pt-4">
               <a 
-                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
+                href="https://www.instagram.com/musclesaction?igsh=MWJuOW1mbzkzMXo5MQ==" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a 
-                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
+                href="https://www.instagram.com/musclesaction?igsh=MWJuOW1mbzkzMXo5MQ==" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
-                href="https://www.instagram.com/musclesaction/p/DMqBo8Zt_zI/" 
+                href="https://www.instagram.com/musclesaction?igsh=MWJuOW1mbzkzMXo5MQ==" 
                 className="text-white/80 hover:text-elite-primary transition-colors hover:animate-scale-bounce"
               >
                 <Twitter className="h-5 w-5" />
