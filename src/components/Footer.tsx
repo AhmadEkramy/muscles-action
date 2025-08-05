@@ -25,8 +25,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3 animate-float">
-              <img src="/logo-white.jpg" alt="Muscles Action" className="h-10 w-auto rounded-full border-2 border-[#4f4f4f] shadow-md" />
+            <div className="flex flex-col items-center space-y-3 animate-float">
+              <img src="/logo-white.jpg" alt="Muscles Action" className="h-10 w-auto shadow-md" />
               <span className="text-xl font-bold text-[#4f4f4f] drop-shadow-[0_2px_8px_#888888]">
                 {t('eliteSupps')}
               </span>
