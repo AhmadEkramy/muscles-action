@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import { Input } from '@/components/ui/input';
+import { useCart } from '@/contexts/CartContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { db } from '@/lib/utils';
 import { collection, getDocs } from 'firebase/firestore';
-import { useCart } from '@/contexts/CartContext';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const OffersPage = () => {
+  const { language } = useLanguage();
   const [offers, setOffers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -32,17 +37,43 @@ const OffersPage = () => {
     });
   };
 
+  // Filter offers based on search term
+  const filteredOffers = offers.filter(offer => 
+    offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    offer.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
       <main className="flex-1">
         <div className="container mx-auto px-2 sm:px-4 py-6 sm:py-12">
           <h1 className="text-4xl font-bold mb-10 text-yellow-500 text-center">🔥 Special Offers</h1>
+          
+          {/* Search Bar */}
+          <div className="relative mb-8 max-w-md mx-auto">
+            <div className="flex items-center">
+              <Input
+                type="text"
+                placeholder={language === 'ar' ? 'البحث في العروض...' : 'Search offers...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pr-10"
+              />
+              <Search className="absolute right-3 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 justify-center mx-auto" style={{ maxWidth: '1100px' }}>
-            {offers.length === 0 ? (
-              <div className="col-span-3 text-center text-gray-400 py-12 text-lg">No offers available at the moment.</div>
+            {filteredOffers.length === 0 ? (
+              <div className="col-span-3 text-center text-gray-400 py-12 text-lg">
+                {searchTerm ? 
+                  (language === 'ar' ? 'لم يتم العثور على عروض.' : 'No offers found.') :
+                  (language === 'ar' ? 'لا توجد عروض متاحة في الوقت الحالي.' : 'No offers available at the moment.')
+                }
+              </div>
             ) : (
-              offers.map(offer => (
+              filteredOffers.map(offer => (
                 <div key={offer.id} className="relative bg-gradient-to-br from-yellow-100 via-white to-yellow-200 rounded-xl shadow-xl p-6 border-2 border-yellow-300 hover:shadow-2xl transition-all group overflow-hidden hover:scale-105 hover:shadow-yellow-400/60 duration-300 animate-pulse flex flex-col items-center text-center">
                   <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-all animate-glow-pulse" />
                   <h3 className="text-xl font-bold mb-2 text-yellow-700">{offer.title}</h3>

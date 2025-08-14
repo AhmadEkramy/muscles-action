@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { db } from '@/lib/utils';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { ChevronRight, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 
 const BestSellingSection = () => {
   const { language, t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       const q = query(
         collection(db, 'products'),
-        where('isBestSeller', '==', true),
-        limit(4)
+        where('isBestSeller', '==', true)
       );
       const querySnapshot = await getDocs(q);
       const productsArr = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -27,6 +28,11 @@ const BestSellingSection = () => {
     };
     fetchProducts();
   }, []);
+
+  // Filter products based on search term
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <section className="py-16">
@@ -52,11 +58,29 @@ const BestSellingSection = () => {
           </Link>
         </div>
 
+        {/* Search Bar */}
+        <div className="relative mb-6">
+          <div className="flex items-center">
+            <Input
+              type="text"
+              placeholder={language === 'ar' ? 'البحث في المنتجات...' : 'Search products...'}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pr-10"
+            />
+            <Search className="absolute right-3 h-5 w-5 text-gray-400" />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {loading ? (
             <div className="col-span-4 text-center text-gray-400 py-12 text-lg">Loading...</div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="col-span-4 text-center text-gray-400 py-12 text-lg">
+              {language === 'ar' ? 'لم يتم العثور على منتجات.' : 'No products found.'}
+            </div>
           ) : (
-            products.map((product) => (
+            filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
             ))
           )}

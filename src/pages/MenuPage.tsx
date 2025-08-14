@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { categories } from '@/data/products';
+import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
+import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { categories } from '@/data/products';
 import { db } from '@/lib/utils';
 import { collection, getDocs } from 'firebase/firestore';
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const MenuPage = () => {
   const { language, t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     setLoading(true);
@@ -27,11 +30,29 @@ const MenuPage = () => {
         <h1 className="text-4xl font-bold mb-10 text-elite-primary text-center">
           {t('menu')}
         </h1>
+        
+        {/* Search Bar */}
+        <div className="relative mb-8">
+          <div className="flex items-center">
+            <Input
+              type="text"
+              placeholder={language === 'ar' ? 'البحث في المنتجات...' : 'Search products...'}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pr-10"
+            />
+            <Search className="absolute right-3 h-5 w-5 text-gray-400" />
+          </div>
+        </div>
+
         {loading ? (
           <div className="text-center text-gray-400 py-12 text-lg">Loading products...</div>
         ) : (
           categories.map(category => {
-            const catProducts = products.filter(p => p.category === category.id);
+            const catProducts = products.filter(p => 
+              p.category === category.id && 
+              p.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
             if (catProducts.length === 0) return null;
             return (
               <section key={category.id} className="mb-16">
